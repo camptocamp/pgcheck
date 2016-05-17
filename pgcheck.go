@@ -6,6 +6,7 @@ import (
 	_ "github.com/lib/pq"
 	"log"
 	"net/http"
+	"os"
 )
 
 var db *sql.DB
@@ -24,9 +25,13 @@ func init() {
 }
 
 func main() {
+	port := os.Getenv("PGCHECK_LISTEN_PORT")
+	if port == "" {
+		port = "8080"
+	}
 	http.HandleFunc("/replica", handler)
 	http.HandleFunc("/master", handler)
-	http.ListenAndServe(":8080", nil)
+	http.ListenAndServe(":"+port, nil)
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {
